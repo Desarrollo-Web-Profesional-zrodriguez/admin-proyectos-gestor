@@ -14,18 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mx.cbtis.gestor.modelo.Comentarios;
 import com.mx.cbtis.gestor.repository.ComentariosRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("java:S4684")
 @RestController
 public class ComentariosController {
 	
+	private static final Logger log = LoggerFactory.getLogger(ComentariosController.class);
+
 	@Autowired
 	ComentariosRepository comentariostable;
 	
 	@PostMapping("/getComentario")
-
 	public List<Comentarios> getComentario(@RequestBody Comentarios idComentario){
-		List<Comentarios> listaComentarios = comentariostable.findByTarea(idComentario.getId_tarea());
-		return listaComentarios;
+		return comentariostable.findByTarea(idComentario.getId_tarea());
 	}
 	
 	@GetMapping("/buscarComentario")
@@ -54,8 +57,7 @@ public class ComentariosController {
 				flag = 1;
 			}
 		} catch (Exception e) {
-			System.err.println("Error controlado al guardar comentario en BD: " + e.getMessage());
-			e.printStackTrace();
+			log.error("Error controlado al guardar comentario en BD: {}", e.getMessage());
 			flag = 0;
 		}
 		

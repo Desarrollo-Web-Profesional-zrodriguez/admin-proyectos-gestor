@@ -13,19 +13,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mx.cbtis.gestor.modelo.Tareas;
-import com.mx.cbtis.gestor.modelo.Usuario;
 import com.mx.cbtis.gestor.repository.TareasRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("java:S4684")
 @RestController
 public class TareasController {
 	
+	private static final Logger log = LoggerFactory.getLogger(TareasController.class);
+
 	@Autowired
 	TareasRepository tareastable;
 	
 	@PostMapping("/getTarea")
 	public List<Tareas> getTarea(@RequestBody Tareas id_proyecto) {
-		List<Tareas> listaTareas = tareastable.findByIdProyecto(id_proyecto.getId_proyecto());
-		return listaTareas;
+		return tareastable.findByIdProyecto(id_proyecto.getId_proyecto());
 	}
 	
 	@GetMapping("/buscarTarea")
@@ -54,7 +57,7 @@ public class TareasController {
 				flag = 1;
 			}
 		} catch (Exception e) {
-			System.err.println("Error controlado al guardar tarea en BD: " + e.getMessage());
+			log.error("Error controlado al guardar tarea en BD: {}", e.getMessage());
 			flag = 0;
 		}
 		

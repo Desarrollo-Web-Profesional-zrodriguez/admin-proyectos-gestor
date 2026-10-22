@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mx.cbtis.gestor.modelo.Usuario;
 import com.mx.cbtis.gestor.repository.UsuarioRepository;
 
+@SuppressWarnings("java:S4684")
 @RestController
 public class UsuarioController {
 	
