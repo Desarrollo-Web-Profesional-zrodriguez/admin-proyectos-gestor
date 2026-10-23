@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS comentarios CASCADE;
 DROP TABLE IF EXISTS tareas CASCADE;
 DROP TABLE IF EXISTS proyectos CASCADE;
 DROP TABLE IF EXISTS usuario CASCADE;
-DROP TABLE IF EXISTS hibernate_sequence CASCADE;
+DROP SEQUENCE IF EXISTS hibernate_sequence CASCADE;
 
 -- --------------------------------------------------------
 -- Tabla: usuario
