@@ -59,8 +59,12 @@ CREATE TABLE tareas (
     fecha_vencimiento DATE,
     estado VARCHAR(255),
     lista VARCHAR(255),
-    id_proyecto INT
+    id_proyecto INT,
+    CONSTRAINT tareas_proyectos_fk FOREIGN KEY (id_proyecto)
+        REFERENCES proyectos (id_proyecto) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE INDEX idx_tareas_id_proyecto ON tareas (id_proyecto);
 
 INSERT INTO tareas (id_tarea, nombre, descripcion, fecha_vencimiento, estado, lista, id_proyecto) VALUES 
 (199, 'Base de datos', 'Realizar la estructura de las tablas', '2024-06-13', 'danger', 'terminado', 197);
@@ -75,8 +79,12 @@ CREATE TABLE comentarios (
     texto_comentario VARCHAR(250),
     fecha_hora TIMESTAMP,
     id_usuario VARCHAR(100),
-    id_tarea INT
+    id_tarea INT,
+    CONSTRAINT comentarios_tareas_fk FOREIGN KEY (id_tarea)
+        REFERENCES tareas (id_tarea) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE INDEX idx_comentarios_id_tarea ON comentarios (id_tarea);
 
 INSERT INTO comentarios (id_comentario, texto_comentario, fecha_hora, id_usuario, id_tarea) VALUES 
 (201, 'Subirlo YA!!!', '2024-06-26 13:48:00', 'Perla Joceline Martínez Meza', 199),
@@ -91,8 +99,16 @@ CREATE TABLE asignaciones (
     id_asignacion SERIAL PRIMARY KEY,
     id_usuario INT,
     id_tarea INT,
-    fecha_asignacion DATE
+    fecha_asignacion DATE,
+    CONSTRAINT asignaciones_usuario_fk FOREIGN KEY (id_usuario)
+        REFERENCES usuario (id_usuario) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT asignaciones_tareas_fk FOREIGN KEY (id_tarea)
+        REFERENCES tareas (id_tarea) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE INDEX asignaciones_usuario_fk_idx ON asignaciones (id_usuario);
+CREATE INDEX asignaciones_tareas_fk_idx ON asignaciones (id_tarea);
+CREATE INDEX idx_usuario_correo ON usuario (correo_electronico);
 
 -- --------------------------------------------------------
 -- Secuencia / Tabla Hibernate para compatibilidad

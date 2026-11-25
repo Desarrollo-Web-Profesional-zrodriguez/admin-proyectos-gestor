@@ -19,8 +19,17 @@ import com.mx.cbtis.gestor.repository.UsuarioRepository;
 @RestController
 public class UsuarioController {
 	
+	private static final String ROL_POR_DEFECTO = "Estudiante";
+
 	@Autowired
 	UsuarioRepository usuariotable;
+
+	private String normalizarRolSeguro(String rolSolicitado) {
+		if ("Docente".equalsIgnoreCase(rolSolicitado)) {
+			return "Docente";
+		}
+		return ROL_POR_DEFECTO;
+	}
 	
 	@PostMapping("/getUsuarioLogin")
 	public Usuario getUsuarioLogin(@RequestBody Usuario userParam) {
@@ -57,6 +66,8 @@ public class UsuarioController {
 	public int addUsuario(@RequestBody Usuario usuario) {
 		int flag = 0;
 		if(usuario != null) {
+			usuario.setId_usuario(null);
+			usuario.setRol(normalizarRolSeguro(usuario.getRol()));
 			usuariotable.save(usuario);
 			flag = 1;
 		}
@@ -68,6 +79,16 @@ public class UsuarioController {
 	public int updateUsuario(@RequestBody Usuario usuario) {
 		int flag = 0;
 		if(usuario != null) {
+			if (usuario.getId_usuario() != null) {
+				Optional<Usuario> existente = usuariotable.findById(usuario.getId_usuario());
+				if (existente.isPresent() && existente.get().getRol() != null) {
+					usuario.setRol(existente.get().getRol());
+				} else {
+					usuario.setRol(normalizarRolSeguro(usuario.getRol()));
+				}
+			} else {
+				usuario.setRol(normalizarRolSeguro(usuario.getRol()));
+			}
 			usuariotable.save(usuario);
 			flag = 1;
 		}

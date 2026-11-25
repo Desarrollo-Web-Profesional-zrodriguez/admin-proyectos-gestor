@@ -138,4 +138,34 @@ class UsuarioControllerTest {
 		assertEquals(0, controller.deleteUsuario(null));
 		verifyNoInteractions(usuariotable);
 	}
+
+	@Test
+	@DisplayName("UT-38 Seguridad S4684: addUsuario bloquea escalacion a Administrador y limpia id_usuario")
+	void addUsuario_bloqueaEscalacionRolYLimpiId() {
+		Usuario intentoAdmin = new Usuario(999, "Intruso", "intruso@correo.com", "1234", "Administrador", "img.png");
+
+		int flag = controller.addUsuario(intentoAdmin);
+
+		assertEquals(1, flag);
+		assertNull(intentoAdmin.getId_usuario());
+		assertEquals("Estudiante", intentoAdmin.getRol());
+		verify(usuariotable).save(intentoAdmin);
+	}
+
+	@Test
+	@DisplayName("UT-39 Seguridad S4684: Jackson ignora rol enviado en JSON por @JsonProperty(READ_ONLY) y updateUsuario preserva rol en BD")
+	void deserializacionJson_ignoraRolEnEntradaYPreservaRolExistente() throws Exception {
+		com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+		String jsonMalicioso = "{\"id_usuario\":1,\"nombre\":\"Ana\",\"correo_electronico\":\"ana@correo.com\",\"contrasena\":\"1234\",\"rol\":\"Administrador\"}";
+
+		Usuario deserializado = mapper.readValue(jsonMalicioso, Usuario.class);
+		assertNull(deserializado.getRol());
+
+		Usuario enBaseDeDatos = new Usuario(1, "Ana", "ana@correo.com", "1234", "Estudiante", "img.png");
+		when(usuariotable.findById(1)).thenReturn(Optional.of(enBaseDeDatos));
+
+		int flag = controller.updateUsuario(deserializado);
+		assertEquals(1, flag);
+		assertEquals("Estudiante", deserializado.getRol());
+	}
 }

@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public class Usuario {
 	
@@ -14,6 +16,7 @@ public class Usuario {
 	private String nombre;
 	private String correo_electronico;
 	private String contrasena;
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private String rol;
 	private String imagen_usuario;
 	
